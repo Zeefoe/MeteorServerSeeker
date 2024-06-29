@@ -15,8 +15,14 @@ jobs:
       - name: Build
         run: ./gradlew build -Pgithub_sha=${{ github.sha }}
 
+      - name: Locate Jar
+        id: find_jar
+        run: |
+          jar_file=$(find ./build/libs -name '*.jar' | head -n 1)
+          echo "::set-output name=jar_file::$jar_file"
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
           name: build-artifacts
-          path: /build/libs
+          path: ${{ steps.find_jar.outputs.jar_file }}
